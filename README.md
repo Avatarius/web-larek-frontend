@@ -47,16 +47,16 @@ yarn build
 ### Базовый код:
 1. Api.
 Базовый класс для осуществления низкоуровневых операций с api.\
-Конструктор принимает такие аргументы:
-`baseUrl: string` - базовый url на api.
-`options: RequestInit` - объект с настройками для формирования запроса.
+Конструктор принимает такие аргументы:\
++`baseUrl: string` - базовый url на api.
++`options: RequestInit` - объект с настройками для формирования запроса.
 Содержит следующие поля:
-`baseUrl: string` - базовый url на api.
-`options: RequestInit` - объект с настройками для формирования запроса.
++`baseUrl: string` - базовый url на api.
++`options: RequestInit` - объект с настройками для формирования запроса.
 Имеет методы:
-`get(uri: string)` - отправить get запрос на сервер.
-`post(uri: string, data: object, method: ApiPostMethods = 'POST')` - отправить post запрос на сервер с данными data.
-`handleResponse(response: Response): Promise<object>` - обработка ответа с сервера. Если ответ с сервера в порядке, то возвращается json, в ином случае ошибка.
++`get(uri: string)` - отправить get запрос на сервер.
++`post(uri: string, data: object, method: ApiPostMethods = 'POST')` - отправить post запрос на сервер с данными data.
++`handleResponse(response: Response): Promise<object>` - обработка ответа с сервера. Если ответ с сервера в порядке, то возвращается json, в ином случае ошибка.
 3. EventEmitter.
 Брокер событий, реализует паттерн "Наблюдатель", позволяет подписываться на события и уведомлять подписчиков о наступлении события, поддерживает интерфейс IEvents.
 Конструктор не принимает аргументов.
