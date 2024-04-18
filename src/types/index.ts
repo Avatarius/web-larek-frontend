@@ -1,4 +1,3 @@
-
 interface IProductItem {
   id: string;
   title: string;
