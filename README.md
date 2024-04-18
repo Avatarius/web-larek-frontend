@@ -50,17 +50,22 @@ yarn build
 Конструктор принимает такие аргументы:
 + `baseUrl: string` - базовый url на api.
 + `options: RequestInit` - объект с настройками для формирования запроса.\
+
 Содержит следующие поля:
 + `baseUrl: string` - базовый url на api.
 + `options: RequestInit` - объект с настройками для формирования запроса.\
+
 Имеет методы:
 + `get(uri: string)` - отправить get запрос на сервер.
 + `post(uri: string, data: object, method: ApiPostMethods = 'POST')` - отправить post запрос на сервер с данными data.
 + `handleResponse(response: Response): Promise<object>` - обработка ответа с сервера. Если ответ с сервера в порядке, то возвращается json, в ином случае ошибка.
+
 3. EventEmitter. Брокер событий, реализует паттерн "Наблюдатель", позволяет подписываться на события и уведомлять подписчиков о наступлении события, поддерживает интерфейс IEvents.\
 Конструктор не принимает аргументов.\
+
 Содержит следующие поля:
 + `_events: Map<EventName, Set<Subscriber>>` - хранит события в виде Map, где ключём является строка или регулярное выражение, а значением сет коллбэков.\
+
 Имеет методы:
 + `on<T extends object>(eventName: EventName, callback: (event: T) => void)` - для подписки на событие.
 + `off(eventName: EventName, callback: Subscriber)` - для отписки от события.
@@ -68,19 +73,25 @@ yarn build
 + `onAll(callback: (event: EmitterEvent) => void)` - для подписки на все события.
 + `offAll()` - для сброса всех подписчиков.
 + `trigger<T extends object>(eventName: string, context?: Partial<T>)` - делает коллбек триггер, генерирующий событие при вызове.
+
 4. Model. Базовый абстрактный класс для всех классов - моделей для хранения и обработки данных, использует EventEmitter посредством ассоциации.\
 Конструктор принимает такие аргументы:
 + `data: Partial<T>` - объект с входными данными. Partial делает поля типа T опциональными.
 + `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.\
+
 Содержит следующие поля:
 + `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.\
+
 Имеет методы:
 + `emitChanges(event: string, payload?: object)` - уведомляет подписчиков об изменениях модели и передаёт данные payload, для этого используется EventEmitter.
+
 5. View. Базовый абстрактный класс для всех классов - отображений , для отображения данных в UI элементах.\
 Конструктор принимает такие аргументы:
 + `container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.\
+
 Содержит следующие поля:
 + `container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.\
+
 Имеет методы:
 + `toggleClass(element: HTMLElement, className: string, force?: boolean)` - переключение класса className на переданном html элементе(element).
 + `setText(element: HTMLElement, value: unknown)` - установка текста(value) в выбранный HTMLElement (element).
