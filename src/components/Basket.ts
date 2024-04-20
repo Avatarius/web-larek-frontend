@@ -28,6 +28,11 @@ class Basket extends Model<IBasket>  implements IBasket{
     this.events.emit('basket:items-changed');
   }
 
+  contains(id: string): boolean {
+    const item = this._items.find((item) => item.id === id)
+    return !Boolean(item);
+  }
+
   get items() {
     return this._items;
   }

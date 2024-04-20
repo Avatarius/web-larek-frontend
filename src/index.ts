@@ -44,8 +44,17 @@ emitter.on('basket:items-changed', () => {
 })
 
 
-emitter.on('card:click', (data) => {
-  const previewUI = new Preview(cloneTemplate(cardPreviewTemplate), {onClick: () => basket.add(data as IProduct)});
+emitter.on('card:click', (data: IProduct) => {
+  const previewUI = new Preview(cloneTemplate(cardPreviewTemplate), {onClick: () => {
+    if (basket.contains(data.id)) {
+      basket.add(data);
+      previewUI.setButtonState(false);
+    } else {
+      basket.remove(data.id);
+      previewUI.setButtonState(true);
+    }
+  }});
+  previewUI.setButtonState(basket.contains(data.id));
   modal.content = previewUI.render(data);
   modal.open();
 

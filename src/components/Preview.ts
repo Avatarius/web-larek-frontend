@@ -12,6 +12,11 @@ class Preview extends Card {
       this._button.addEventListener('click', actions.onClick);
     }
   }
+
+  setButtonState(state: boolean) {
+    const text = state ? 'Купить' : 'Удалить';
+    this.setText(this._button, text);
+  }
 }
 
 

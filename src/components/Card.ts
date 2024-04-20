@@ -61,7 +61,8 @@ class Card extends View<IProduct> {
   }
 
   set price(value: string) {
-    this.setText(this._price, `${value} синапсов`);
+    const priceText = value ? `${value} синапсов` : 'Бесценно';
+    this.setText(this._price, priceText);
   }
 
   set image(value: string) {
