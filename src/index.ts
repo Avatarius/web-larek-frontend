@@ -8,7 +8,7 @@ import { CDN_URL, API_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 import { CatalogCard, BasketCard } from './components/Card';
 import { Preview } from './components/Preview';
-import { IProduct } from './types';
+import { IBasketItem, IProduct } from './types';
 import { BasketView } from './components/BasketView';
 
 // темплейты
@@ -34,12 +34,17 @@ emitter.on('basket:open', () => {
 })
 
 emitter.on('basket:items-changed', () => {
-  const cardList = basket.items.map(item => {
-    const card = new BasketCard(cloneTemplate(cardBasketTemplate), {onClick: () => basket.remove(item.id)});
-    return card.render(item);
-  })
-  basketUI.list = cardList;
+  const cardList = basket.items.map((item, index) => {
+    const data: IBasketItem = Object.assign(item, {index: index + 1})
 
+    const card = new BasketCard(cloneTemplate(cardBasketTemplate), {onClick: () => basket.remove(item.id)});
+
+
+
+    return card.render(data);
+  });
+  page.counter = basket.length.toString();
+  basketUI.list = cardList;
 
 })
 

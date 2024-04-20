@@ -25,6 +25,7 @@ class Basket extends Model<IBasket>  implements IBasket{
 
   remove(id: string) {
     this._items = this._items.filter((item) => item.id !== id);
+
     this.events.emit('basket:items-changed');
   }
 
@@ -38,6 +39,10 @@ class Basket extends Model<IBasket>  implements IBasket{
   }
 
   get total() {
+    return this._items.length;
+  }
+
+  get length() {
     return this._items.length;
   }
 

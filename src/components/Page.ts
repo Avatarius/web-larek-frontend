@@ -10,12 +10,14 @@ interface IPage  {
 class Page extends View<IPage> {
   protected _basketButton: HTMLElement;
   protected _catalog: HTMLElement;
+  protected _counter: HTMLSpanElement;
   protected events: IEvents;
 
   constructor(container: HTMLElement, events: IEvents) {
     super(container);
     this.events = events;
     this._basketButton = ensureElement<HTMLElement>('.header__basket');
+    this._counter = ensureElement<HTMLSpanElement>('.header__basket-counter');
     this._catalog = ensureElement<HTMLElement>('.gallery');
 
     this._basketButton.addEventListener('click', () => events.emit('basket:open'));
@@ -24,6 +26,10 @@ class Page extends View<IPage> {
 
   set catalog(items: HTMLElement[]) {
     this._catalog.replaceChildren(...items);
+  }
+
+  set counter(value: string) {
+    this.setText(this._counter, value);
   }
 }
 

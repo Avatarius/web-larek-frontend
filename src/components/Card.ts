@@ -87,13 +87,23 @@ class CatalogCard extends Card {
 
 class BasketCard extends Card {
   protected button: HTMLElement;
+  protected _index: HTMLSpanElement;
 
   constructor(container: HTMLElement, actions?: IClickActions) {
     super(container);
-    this.button = ensureElement<HTMLButtonElement>('.card__button');
+    this.button = ensureElement<HTMLButtonElement>('.card__button', container);
+    this._index = ensureElement<HTMLSpanElement>('.basket__item-index', container);
     if (actions?.onClick) {
-      this.container.addEventListener('click', actions.onClick);
+      this.button.addEventListener('click', actions.onClick);
     }
+  }
+
+  get index() {
+    return this._index.textContent || '';
+  }
+
+  set index(value: string) {
+    this.setText(this._index, value);
   }
 }
 

@@ -24,6 +24,10 @@ interface IProduct {
   image: string;
 }
 
+interface IBasketItem extends IProduct {
+  index: number;
+}
+
 
 type PaymentMethod = 'cash' | 'online';
 
@@ -67,4 +71,4 @@ interface IClickActions {
 }
 
 
-export type {IModel, IView, IShopApi, IProduct, IOrder, IOrderResult, IClickActions};
+export type {IModel, IView, IShopApi, IProduct, IBasketItem, IOrder, IOrderResult, IClickActions};
