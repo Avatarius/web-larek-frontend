@@ -1,4 +1,21 @@
-interface IProductItem {
+import { IEvents } from "../components/base/events";
+
+interface IModel {
+  emitChanges(event:string, data?: object): void;
+}
+
+interface IView<T> {
+  toggleClass(element: HTMLElement, className: string, force?: boolean): void;
+  setText(element: HTMLElement, value: unknown): void;
+  setDisabled(element: HTMLElement, state: boolean): void;
+  setHidden(element: HTMLElement): void;
+  setVisible(element: HTMLElement): void;
+  setImage(element: HTMLElement, src: string, alt?: string): void;
+  render(data?: Partial<T>): HTMLElement;
+}
+
+
+interface IProduct {
   id: string;
   title: string;
   description: string;
@@ -6,16 +23,6 @@ interface IProductItem {
   price: number;
   image: string;
 }
-
-interface IProductItemUI {
-  title: string;
-  description: string;
-  category: string;
-  price: string;
-  image: string;
-}
-type IProductCardUI = Pick<IProductItemUI, 'title' | 'category' | 'price' | 'image'>
-type IBasketItemUI = Pick<IProductItemUI, 'title' | 'price'>;
 
 
 type PaymentMethod = 'cash' | 'online';
@@ -50,7 +57,14 @@ interface IOrderResult {
 }
 
 interface IShopApi {
-  getProductList(): Promise<IProductItem[]>;
-  getProductItem(id:string): Promise<IProductItem>;
+  getProductList(): Promise<IProduct[]>;
+  getProductItem(id:string): Promise<IProduct>;
   postOrder(order: IOrder): Promise<IOrderResult>;
 }
+
+interface IClickActions {
+  onClick: (event: MouseEvent) => void;
+}
+
+
+export type {IModel, IView, IShopApi, IProduct, IOrder, IOrderResult, IClickActions};
