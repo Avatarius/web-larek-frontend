@@ -19,6 +19,24 @@ class Card extends View<IProduct> {
     this._description = container.querySelector('card__text');
     this._image = container.querySelector('.card__image');
     this._price = container.querySelector('.card__price');
+
+
+  }
+
+  protected toggleCategoryClass(value: string) {
+    if (!this._category) return;
+    const categoryClassObj: Record<string, string> = {
+      'софт-скил': 'card__category_soft',
+      'другое': 'card__category_other',
+      'дополнительное': 'card__category_additional',
+      'кнопка': 'card__category_button',
+      'хард-скил': 'card__category_hard'
+    }
+    if (value in categoryClassObj) {
+      const classModifier = categoryClassObj[value];
+      this.toggleClass(this._category, categoryClassObj[value], true);
+    }
+
   }
 
   get title() {
@@ -34,6 +52,7 @@ class Card extends View<IProduct> {
   }
 
   set category(value: string) {
+    this.toggleCategoryClass(value);
     this.setText(this._category, value);
   }
 
