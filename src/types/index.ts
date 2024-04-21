@@ -71,10 +71,15 @@ interface IClickActions {
   onClick: (event: MouseEvent) => void;
 }
 
+interface IFormState {
+  valid: boolean;
+  error: string;
+}
+
 interface IFormInput {
   field: string;
   value: string;
 }
 
 
-export type {IModel, IView, IShopApi, IProduct, IBasketItem, IOrder, IOrderResult, IDelivery, IClickActions, IFormInput};
+export type {IModel, IView, IShopApi, IProduct, IBasketItem, IOrder, IOrderResult, IDelivery, IClickActions, IFormState, IFormInput};

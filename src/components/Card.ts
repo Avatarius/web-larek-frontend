@@ -34,7 +34,7 @@ class Card extends View<IProduct> {
     }
     if (value in categoryClassObj) {
       const classModifier = categoryClassObj[value];
-      this.toggleClass(this._category, categoryClassObj[value], true);
+      this.toggleClass(this._category, classModifier, true);
     }
 
   }

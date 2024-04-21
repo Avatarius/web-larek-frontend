@@ -17,6 +17,12 @@ class Modal extends View<IModal> {
     this._closeButton = ensureElement<HTMLButtonElement>('.modal__close', container);
     this._content = ensureElement<HTMLDivElement>('.modal__content', container);
     this._closeButton.addEventListener('click', () => this.events.emit('modal:close'));
+    document.addEventListener('click', (evt: MouseEvent) => {
+      const target = evt.target as HTMLElement;
+      if (target.classList.contains('modal')) {
+        this.close();
+      }
+    })
   }
 
   open() {

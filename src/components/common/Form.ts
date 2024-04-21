@@ -1,14 +1,11 @@
 import { ensureAllElements, ensureElement } from "../../utils/utils";
 import { View } from "../base/View";
 import { IEvents } from "../base/events";
+import { IFormState } from "../../types";
 
-interface IFormState {
-  valid: boolean;
-  error: string;
-}
 
 class Form<T> extends View<IFormState> {
-  protected container: HTMLElement;
+  protected container: HTMLFormElement;
   protected events: IEvents;
   protected inputList: HTMLInputElement[];
   protected _submit: HTMLButtonElement;
@@ -21,18 +18,20 @@ class Form<T> extends View<IFormState> {
     this._error = ensureElement<HTMLSpanElement>('.form__errors', container);
 
     this.container.addEventListener('input', () => {
-
+      this.onInputChange();
     })
-    this.container.addEventListener('input', (evt: Event) => {
-      const target = evt.target as HTMLInputElement;
-      const field = target.name as keyof T;
-      const value = target.value;
-      this.onInputChange(field, value);
+
+    this.container.addEventListener('submit', (evt: Event) => {
+      evt.preventDefault();
+      this.events.emit(`${this.container.name}:submit`);
     })
   }
 
-  onInputChange(field: keyof T, value: string) {
-    this.events.emit('delivery:input', {field, value});
+  protected onInputChange() {
+    const inputDataList = this.inputList.map(inputElement => {
+      return {field: inputElement.name, value: inputElement.value}
+    });
+    this.events.emit(`${this.container.name}:input`, inputDataList);
   }
 
   set valid(value: boolean) {

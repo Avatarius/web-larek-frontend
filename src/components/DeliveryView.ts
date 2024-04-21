@@ -21,7 +21,7 @@ class DeliveryView extends Form<IDelivery> {
         this.toggleClass(button, 'button_alt-active', true);
         this.inputList.forEach(inputElement => {
           const fieldName = inputElement.name as keyof IDelivery;
-          this.onInputChange(fieldName, inputElement.value);
+          this.onInputChange();
 
         })
       }

@@ -23,6 +23,10 @@ class BasketView extends View<IBasketView> {
     this._list.replaceChildren(...items);
   }
 
+  set valid(state: boolean) {
+    this.setDisabled(this.button, state);
+  }
+
 
 }
 
