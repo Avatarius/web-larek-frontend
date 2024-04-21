@@ -1,7 +1,7 @@
 import { ensureAllElements, ensureElement } from "../../utils/utils";
 import { View } from "../base/View";
 import { IEvents } from "../base/events";
-import { IFormState } from "../../types";
+import { IFormState, IInputData } from "../../types";
 
 
 class Form<T> extends View<IFormState> {
@@ -28,9 +28,11 @@ class Form<T> extends View<IFormState> {
   }
 
   protected onInputChange() {
-    const inputDataList = this.inputList.map(inputElement => {
+    const inputDataList: IInputData[] = this.inputList.map(inputElement => {
+      const inputData: IInputData = {field: inputElement.name, value: inputElement.value};
       return {field: inputElement.name, value: inputElement.value}
     });
+
     this.events.emit(`${this.container.name}:input`, inputDataList);
   }
 

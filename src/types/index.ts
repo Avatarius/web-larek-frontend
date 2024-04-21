@@ -76,10 +76,10 @@ interface IFormState {
   error: string;
 }
 
-interface IFormInput {
+interface IInputData {
   field: string;
   value: string;
 }
 
 
-export type {IModel, IView, IShopApi, IProduct, IBasketItem, IOrder, IOrderResult, IDelivery, IClickActions, IFormState, IFormInput};
+export type {IModel, IView, IShopApi, IProduct, IBasketItem, IOrder, IOrderResult, IDelivery, IClickActions, IFormState, IInputData};

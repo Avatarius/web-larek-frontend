@@ -3,7 +3,7 @@ import { IEvents } from "./base/events";
 import { Form } from "./common/Form"
 import { IDelivery } from "../types";
 
-class DeliveryView extends Form<IDelivery> {
+class OrderView extends Form<IDelivery> {
   protected buttonContainer: HTMLDivElement;
   protected onlineButton: HTMLButtonElement;
   protected cashButton: HTMLButtonElement;
@@ -19,11 +19,7 @@ class DeliveryView extends Form<IDelivery> {
         this.toggleClass(this.onlineButton, 'button_alt-active', false);
         this.toggleClass(this.cashButton, 'button_alt-active', false);
         this.toggleClass(button, 'button_alt-active', true);
-        this.inputList.forEach(inputElement => {
-          const fieldName = inputElement.name as keyof IDelivery;
-          this.onInputChange();
-
-        })
+        this.onInputChange();
       }
     });
 
@@ -36,4 +32,4 @@ class DeliveryView extends Form<IDelivery> {
 }
 
 
-export {DeliveryView};
+export {OrderView};
