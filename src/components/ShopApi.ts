@@ -1,4 +1,4 @@
-import { IShopApi, IProduct, IOrder, IOrderResult } from "../types";
+import { IShopApi, IProduct, IOrderData, IOrderResult } from "../types";
 import { Api, ApiListResponse } from "./base/api";
 
 class ShopApi extends Api implements IShopApi {
@@ -28,7 +28,7 @@ class ShopApi extends Api implements IShopApi {
   );
   }
 
-  postOrder(order: IOrder): Promise<IOrderResult> {
+  postOrder(order: IOrderData): Promise<IOrderResult> {
     return this.post('/order', order).then(
       (data: IOrderResult) => data
   );

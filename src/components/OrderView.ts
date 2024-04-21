@@ -1,9 +1,9 @@
 import { ensureAllElements, ensureElement } from '../utils/utils';
 import { IEvents } from './base/events';
 import { Form } from './common/Form';
-import { IDeliveryForm, PaymentMethod } from '../types';
+import { IContacts, IDelivery, PaymentMethod } from '../types';
 
-class OrderView extends Form<IDeliveryForm> {
+class OrderView extends Form<IDelivery> {
 	protected buttonContainer: HTMLDivElement;
 	protected onlineButton: HTMLButtonElement;
 	protected cashButton: HTMLButtonElement;
@@ -30,36 +30,51 @@ class OrderView extends Form<IDeliveryForm> {
 		});
 	}
 
-  protected getActiveButton(): HTMLButtonElement | null {
-    if (this.onlineButton.classList.contains('button_alt-active')) {
-      return this.onlineButton;
-    } else if (this.cashButton.classList.contains('button_alt-active')) {
-      return this.cashButton;
-    } else {
-      return null;
-    }
-  }
+	protected getActiveButton(): HTMLButtonElement | null {
+		if (this.onlineButton.classList.contains('button_alt-active')) {
+			return this.onlineButton;
+		} else if (this.cashButton.classList.contains('button_alt-active')) {
+			return this.cashButton;
+		} else {
+			return null;
+		}
+	}
 
-  get payment(): string {
-    const buttonActive = this.getActiveButton();
-    const result = (buttonActive) ? buttonActive.name : '';
-    return result;
-  }
+	get payment(): string {
+		const buttonActive = this.getActiveButton();
+		const result = buttonActive ? buttonActive.name : '';
+		return result;
+	}
 
-  get address(): string {
-    return (this.container.elements.namedItem('address') as HTMLInputElement).value;
-  }
+	get address(): string {
+		return (this.container.elements.namedItem('address') as HTMLInputElement)
+			.value;
+	}
 
-  get valid(): boolean {
-    const isInputValid = super.valid;
-    return isInputValid && this.payment !== '';
-  }
+	get valid(): boolean {
+		const isInputValid = super.valid;
+		return isInputValid && this.payment !== '';
+	}
 
-  set valid(value: boolean) {
-    super.valid = value;
-  }
-
-
+	set valid(value: boolean) {
+		super.valid = value;
+	}
 }
 
-export { OrderView };
+class ContactsView extends Form<IContacts> {
+	constructor(container: HTMLFormElement, events: IEvents) {
+		super(container, events);
+	}
+
+	get email(): string {
+		return (this.container.elements.namedItem('email') as HTMLInputElement)
+			.value;
+	}
+
+	get phone(): string {
+		return (this.container.elements.namedItem('phone') as HTMLInputElement)
+			.value;
+	}
+}
+
+export { OrderView, ContactsView };

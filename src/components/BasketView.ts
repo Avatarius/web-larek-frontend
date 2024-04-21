@@ -4,17 +4,20 @@ import { IClickActions } from "../types";
 
 interface IBasketView {
   list: HTMLElement[];
-  valid: boolean
+  valid: boolean;
+  price: number;
 }
 
 class BasketView extends View<IBasketView> {
   protected _list: HTMLElement;
+  protected _price: HTMLSpanElement;
   protected button: HTMLButtonElement;
 
   constructor(container: HTMLElement, actions?: IClickActions) {
     super(container);
     this._list = ensureElement<HTMLUListElement>('.basket__list', container);
     this.button = ensureElement<HTMLButtonElement>('.basket__button', container);
+    this._price = ensureElement<HTMLSpanElement>('.basket__price', container);
     if (actions?.onClick) {
       this.button.addEventListener('click', actions.onClick);
     }
@@ -26,6 +29,11 @@ class BasketView extends View<IBasketView> {
 
   set valid(state: boolean) {
     this.setDisabled(this.button, state);
+  }
+
+  set price(value: number) {
+    const priceText = value ? `${value} синапсов` : 'Бесценно';
+    this.setText(this._price, priceText);
   }
 
 }

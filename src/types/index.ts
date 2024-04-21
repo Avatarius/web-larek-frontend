@@ -49,13 +49,13 @@ interface IOrderList {
 	items: string[];
 }
 
-type IOrder = IDelivery & IContacts & IOrderList;
+type IOrderData = IDelivery & IContacts & IOrderList;
 
 interface IOrderBuilder {
-	setDelivery(delivery: IDelivery): void;
-	setContacts(contacts: IContacts): void;
-	setOrderList(orderList: IOrderList): void;
-	getResult(): IOrder;
+	delivery: IDelivery;
+	contacts: IContacts;
+	orderList: IOrderList;
+	result: IOrderData;
 }
 
 interface IOrderResult {
@@ -66,7 +66,7 @@ interface IOrderResult {
 interface IShopApi {
 	getProductList(): Promise<IProduct[]>;
 	getProductItem(id: string): Promise<IProduct>;
-	postOrder(order: IOrder): Promise<IOrderResult>;
+	postOrder(order: IOrderData): Promise<IOrderResult>;
 }
 
 interface IClickActions {
@@ -94,8 +94,11 @@ export type {
 	IProduct,
 	PaymentMethod,
 	IBasketItem,
-	IOrder,
+	IOrderData,
+  IContacts,
 	IOrderResult,
+  IOrderList,
+  IOrderBuilder,
 	IDelivery,
   IDeliveryForm,
 	IClickActions,

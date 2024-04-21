@@ -3,13 +3,10 @@ import { Model } from "./base/Model";
 import { IEvents } from "./base/events";
 
 interface IBasket {
-  add(item: IProduct): void;
-  remove(id: string): void;
   items: IProduct[];
-  total: number;
 }
 
-class Basket extends Model<IBasket>  implements IBasket{
+class Basket extends Model<IBasket> {
   protected _items: IProduct[];
 
   constructor(data: Partial<IBasket>, events: IEvents) {
@@ -33,12 +30,18 @@ class Basket extends Model<IBasket>  implements IBasket{
     return !Boolean(item);
   }
 
+  clear() {
+    this._items = [];
+  }
+
   get items() {
     return this._items;
   }
 
   get total() {
-    return this._items.length;
+    return this._items.reduce((sum, item) => {
+      return item.price + sum;
+    }, 0);
   }
 
   get length() {

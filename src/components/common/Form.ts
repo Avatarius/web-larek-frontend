@@ -45,6 +45,10 @@ class Form<T> extends View<IFormState>{
     this.setText(this._error, value);
   }
 
+  clear() {
+    this.container.clear();
+  }
+
   render(data?: Partial<T> & IFormState): HTMLElement {
     const {valid, error, ...inputs} = data;
     super.render({valid, error});
