@@ -8,7 +8,7 @@ import { CDN_URL, API_URL, INPUT_ERROR_TEXT } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 import { CatalogCard, BasketCard } from './components/Card';
 import { Preview } from './components/Preview';
-import { IBasketItem, IInputData, IFormState, IProduct } from './types';
+import { IBasketItem, IInputData, IProduct, IForm, IDeliveryForm, IFormState, IView } from './types';
 import { BasketView } from './components/BasketView';
 import { OrderView } from './components/OrderView';
 import { Form } from './components/common/Form';
@@ -38,38 +38,39 @@ const contacts = new Form(cloneTemplate(contactsTemplate), emitter);
 
 emitter.on('basket:open', () => {
 	modal.open();
-	modal.content = basketUI.render();
+  modal.render({content: basketUI.render({valid: basket.length === 0})});
 });
 
 emitter.on('order:open', () => {
-	modal.content = order.render({ valid: false, error: INPUT_ERROR_TEXT });
-  order.emitInputData();
+  const errorText = !order.valid ? INPUT_ERROR_TEXT : '';
+  modal.render({content: order.render({valid: order.valid, error: errorText})});
 });
 
-function checkInputValidity(data: IInputData[]) {
-	const isInputValid = data.every((item) => item.value.length > 0);
-	return isInputValid;
+function validate<T>(form: IForm<T>) {
+  const errorText = !form.valid ? INPUT_ERROR_TEXT : '';
+  const validity: IFormState = {valid: form.valid, error: errorText};
+  form.render(validity);
 }
 
-function validateForm(form: IFormState, validity: boolean) {
-	form.valid = validity;
-	const errorText = !validity ? INPUT_ERROR_TEXT : '';
-	form.error = errorText;
-}
-
-emitter.on('order:input', (data: IInputData[]) => {
-	const isValid = checkInputValidity(data) && order.isPaymentSelected();
-	validateForm(order, isValid);
-});
-
-emitter.on('contacts:input', (data: IInputData[]) => {
-	const isValid = checkInputValidity(data);
-	validateForm(contacts, isValid);
+emitter.on('order:input', () => {
+  validate(order);
 });
 
 emitter.on('order:submit', () => {
-	modal.content = contacts.render({ valid: false, error: INPUT_ERROR_TEXT });
+  const errorText = !contacts.valid ? INPUT_ERROR_TEXT : '';
+  modal.render({content: contacts.render({valid: contacts.valid, error: errorText})});
 });
+
+emitter.on('contacts:input', () => {
+  validate(contacts);
+});
+
+emitter.on('contacts:submit', () => {
+  console.log('submit');
+
+})
+
+
 
 emitter.on('basket:items-changed', () => {
 	const cardList = basket.items.map((item, index) => {
@@ -97,7 +98,7 @@ emitter.on('card:click', (data: IProduct) => {
 		},
 	});
 	previewUI.setButtonState(basket.contains(data.id));
-	modal.content = previewUI.render(data);
+  modal.render({content: previewUI.render(data)})
 	modal.open();
 });
 

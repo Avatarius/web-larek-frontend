@@ -1,9 +1,9 @@
 import { ensureAllElements, ensureElement } from '../utils/utils';
 import { IEvents } from './base/events';
 import { Form } from './common/Form';
-import { IDelivery } from '../types';
+import { IDeliveryForm, PaymentMethod } from '../types';
 
-class OrderView extends Form<IDelivery> {
+class OrderView extends Form<IDeliveryForm> {
 	protected buttonContainer: HTMLDivElement;
 	protected onlineButton: HTMLButtonElement;
 	protected cashButton: HTMLButtonElement;
@@ -25,17 +25,41 @@ class OrderView extends Form<IDelivery> {
 				this.toggleClass(this.onlineButton, 'button_alt-active', false);
 				this.toggleClass(this.cashButton, 'button_alt-active', false);
 				this.toggleClass(button, 'button_alt-active', true);
-				this.emitInputData();
+				this.emitInput();
 			}
 		});
 	}
 
-	isPaymentSelected() {
-		return (
-			this.onlineButton.classList.contains('button_alt-active') ||
-			this.cashButton.classList.contains('button_alt-active')
-		);
-	}
+  protected getActiveButton(): HTMLButtonElement | null {
+    if (this.onlineButton.classList.contains('button_alt-active')) {
+      return this.onlineButton;
+    } else if (this.cashButton.classList.contains('button_alt-active')) {
+      return this.cashButton;
+    } else {
+      return null;
+    }
+  }
+
+  get payment(): string {
+    const buttonActive = this.getActiveButton();
+    const result = (buttonActive) ? buttonActive.name : '';
+    return result;
+  }
+
+  get address(): string {
+    return (this.container.elements.namedItem('address') as HTMLInputElement).value;
+  }
+
+  get valid(): boolean {
+    const isInputValid = super.valid;
+    return isInputValid && this.payment !== '';
+  }
+
+  set valid(value: boolean) {
+    super.valid = value;
+  }
+
+
 }
 
 export { OrderView };

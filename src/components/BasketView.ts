@@ -4,6 +4,7 @@ import { IClickActions } from "../types";
 
 interface IBasketView {
   list: HTMLElement;
+  valid: boolean
 }
 
 class BasketView extends View<IBasketView> {
@@ -26,7 +27,6 @@ class BasketView extends View<IBasketView> {
   set valid(state: boolean) {
     this.setDisabled(this.button, state);
   }
-
 
 }
 
