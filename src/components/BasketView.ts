@@ -22,6 +22,8 @@ class BasketView extends View<IBasketView> {
   set list(items: HTMLElement[]) {
     this._list.replaceChildren(...items);
   }
+
+
 }
 
 

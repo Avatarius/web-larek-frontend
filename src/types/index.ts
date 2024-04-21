@@ -36,6 +36,7 @@ interface IDelivery {
   address: string;
 }
 
+
 interface IContacts {
   email: string;
   phone: string;
@@ -70,5 +71,10 @@ interface IClickActions {
   onClick: (event: MouseEvent) => void;
 }
 
+interface IFormInput {
+  field: string;
+  value: string;
+}
 
-export type {IModel, IView, IShopApi, IProduct, IBasketItem, IOrder, IOrderResult, IClickActions};
+
+export type {IModel, IView, IShopApi, IProduct, IBasketItem, IOrder, IOrderResult, IDelivery, IClickActions, IFormInput};

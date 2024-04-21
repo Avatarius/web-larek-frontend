@@ -4,18 +4,20 @@ import { Page } from './components/Page';
 import { Modal } from './components/common/Modal';
 import { Basket } from './components/Basket';
 import { EventEmitter } from './components/base/events';
-import { CDN_URL, API_URL } from './utils/constants';
+import { CDN_URL, API_URL, INPUT_ERROR_TEXT } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 import { CatalogCard, BasketCard } from './components/Card';
 import { Preview } from './components/Preview';
-import { IBasketItem, IProduct } from './types';
+import { IBasketItem, IFormInput, IProduct } from './types';
 import { BasketView } from './components/BasketView';
+import { DeliveryView } from './components/DeliveryView';
 
 // темплейты
 const cardTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
 const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
+const deliveryTemplate = ensureElement<HTMLTemplateElement>('#order');
 
 const api = new ShopApi(CDN_URL, API_URL);
 const emitter = new EventEmitter();
@@ -23,28 +25,39 @@ const content = ensureElement<HTMLElement>('.page');
 const page = new Page(content, emitter);
 const modal = new Modal(ensureElement<HTMLDivElement>('#modal-container'), emitter);
 const basket = new Basket({}, emitter);
-const basketUI = new BasketView(cloneTemplate(basketTemplate));
-
+const basketUI = new BasketView(cloneTemplate(basketTemplate), {onClick: () => emitter.emit('delivery:open')});
+const delivery = new DeliveryView(cloneTemplate(deliveryTemplate), emitter);
 
 emitter.on('basket:open', () => {
   modal.open();
-
   modal.content = basketUI.render();
+})
+
+emitter.on('delivery:open', () => {
+
+  modal.content = delivery.render({valid: false, error: INPUT_ERROR_TEXT});
+})
+
+emitter.on('delivery:input', (data: IFormInput) => {
+  const isValid = (data.value.length > 0) && delivery.isPaymentSelected();
+  delivery.valid = isValid;
+  const errorText = !isValid ? INPUT_ERROR_TEXT : '';
+  delivery.error = errorText;
+})
+
+emitter.on('contacts:open', () => {
 
 })
 
 emitter.on('basket:items-changed', () => {
   const cardList = basket.items.map((item, index) => {
     const data: IBasketItem = Object.assign(item, {index: index + 1})
-
     const card = new BasketCard(cloneTemplate(cardBasketTemplate), {onClick: () => basket.remove(item.id)});
-
-
-
     return card.render(data);
   });
   page.counter = basket.length.toString();
   basketUI.list = cardList;
+
 
 })
 
