@@ -43,6 +43,7 @@ emitter.on('basket:open', () => {
 
 emitter.on('order:open', () => {
 	modal.content = order.render({ valid: false, error: INPUT_ERROR_TEXT });
+  order.emitInputData();
 });
 
 function checkInputValidity(data: IInputData[]) {

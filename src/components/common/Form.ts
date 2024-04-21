@@ -18,7 +18,7 @@ class Form<T> extends View<IFormState> {
     this._error = ensureElement<HTMLSpanElement>('.form__errors', container);
 
     this.container.addEventListener('input', () => {
-      this.onInputChange();
+      this.emitInputData();
     })
 
     this.container.addEventListener('submit', (evt: Event) => {
@@ -27,12 +27,12 @@ class Form<T> extends View<IFormState> {
     })
   }
 
-  protected onInputChange() {
+
+  emitInputData() {
     const inputDataList: IInputData[] = this.inputList.map(inputElement => {
       const inputData: IInputData = {field: inputElement.name, value: inputElement.value};
-      return {field: inputElement.name, value: inputElement.value}
+      return inputData;
     });
-
     this.events.emit(`${this.container.name}:input`, inputDataList);
   }
 

@@ -20,13 +20,12 @@ class Basket extends Model<IBasket>  implements IBasket{
   add(item: IProduct) {
     if (this._items.includes(item)) return;
     this._items.push(item);
-    this.events.emit('basket:items-changed');
+    this.emitChanges('basket:items-changed');
   }
 
   remove(id: string) {
     this._items = this._items.filter((item) => item.id !== id);
-
-    this.events.emit('basket:items-changed');
+    this.emitChanges('basket:items-changed');
   }
 
   contains(id: string): boolean {
