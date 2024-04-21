@@ -3,7 +3,7 @@ import { View } from "./base/View";
 import { IClickActions } from "../types";
 
 interface IBasketView {
-  list: HTMLElement;
+  list: HTMLElement[];
   valid: boolean
 }
 

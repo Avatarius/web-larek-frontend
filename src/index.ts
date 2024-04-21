@@ -81,8 +81,7 @@ emitter.on('basket:items-changed', () => {
 		return card.render(data);
 	});
 	page.counter = basket.length.toString();
-	basketUI.valid = cardList.length === 0;
-	basketUI.list = cardList;
+  basketUI.render({valid: cardList.length === 0, list: cardList});
 });
 
 emitter.on('card:click', (data: IProduct) => {
@@ -90,14 +89,14 @@ emitter.on('card:click', (data: IProduct) => {
 		onClick: () => {
 			if (basket.contains(data.id)) {
 				basket.add(data);
-				previewUI.setButtonState(false);
+				previewUI.valid = false;
 			} else {
 				basket.remove(data.id);
-				previewUI.setButtonState(true);
+				previewUI.valid = true;
 			}
 		},
 	});
-	previewUI.setButtonState(basket.contains(data.id));
+  previewUI.valid = basket.contains(data.id);
   modal.render({content: previewUI.render(data)})
 	modal.open();
 });

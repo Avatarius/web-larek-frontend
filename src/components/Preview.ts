@@ -13,7 +13,7 @@ class Preview extends Card {
     }
   }
 
-  setButtonState(state: boolean) {
+  set valid(state: boolean) {
     const text = state ? 'Купить' : 'Удалить';
     this.setText(this._button, text);
   }
