@@ -126,76 +126,75 @@ yarn build
 + `postOrder(order: IOrder): IOrderResult` - отправляет post запрос на сервер, содержащий данные о заказе. Для этого нужны данные о заказе (способ оплаты, адрес, email, телефон)
 и информация о купленных товарах(их id, общая стоимость).
 
-### 2. Product. Наследуется от базового класса Model. Представляет собой класс - адаптер и соответственно реализует паттерн "адаптер". Используется для хранения и обработки данных об 1 еденице товара.
+### 2. Catalog. Наследуется от базового класса Model. Представляет собой модель для коллекции товаров на главной странице, используется для хранения и обработки данных о коллекции товаров.
+Хранит список объектов, которые поддерживают интерфейс IProduct(чтобы иметь доступ к методам конвертации).
+При добавлении объектов генерируется событие 'catalog:items-changed', по которому Card и Page отрисовывают список карточек.
 #### Конструктор принимает такие аргументы:
-+ `product: IProductItem` - объект, полученный из api, поддерживает интерфейс IProductItem.
++ `data: Partial<T>` - объект с входными данными. Partial делает поля типа T опциональными.
++ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Содержит следующие поля:
-+ `product: IProductItem` - объект, полученный из api, поддерживает интерфейс IProductItem.
-
-#### Имеет ряд методов для конвертации объекта в формат, удобный для классов - отображений, такие как:
-+ `toProductCardUIObj(): IProductCardUI`  - конвертация в объект, удобный для класса - отображения CardView, поддерживает интерфейс IProductCardUI.
-+ `toProductItemUIObj(): IProductItemUI` - конвертация в объект, удобный для класса - отображения ProductView, поддерживает интерфейс IProductItemUI.
-+ `toBasketItemUIObj(): IBasketItemUI` - конвертация в объект, удобный для класса - отображения BasketItemView, поддерживает интерфейс IBasketItemUI.
-
-### 3. Catalog. Наследуется от базового класса Model. Представляет собой модель для коллекции товаров на главной странице, используется для хранения и обработки данных о коллекции товаров.
-Хранит список объектов, которые поддерживают интерфейс IProductItem(чтобы иметь доступ к методам конвертации).
-При добавлении объектов генерируется событие 'catalog:items-changed', по которому cardView и catalogView отрисовывает список карточек.
-#### Конструктор не принимает аргументов.
-
-#### Содержит следующие поля:
-+ `_items: IProductItem[]` - массив объектов - товаров.
++ `protected _items: IProduct[];` - массив объектов - товаров.
 
 #### Имеет методы:
-+ `set items(productList: IProduct[]):void` - установить массив Product в защищённое свойство items.
++ `set items(list: IProduct[]):void` - установить массив Product в защищённое свойство items.
 + `get items(): IProduct[]` - получить массив Product из защищенного свойства items.
-+ `getProduct(string: id): IProduct` - получить конкретный Product по id.
++ `find(string: id): IProduct | undefined` - получить конкретный Product по id.
 
-### 4. Basket. Наследуется от базового класса Model. Представляет собой модель для коллекции товаров в корзине, используется для хранения и обработки данных о товарах в корзине.
-Хранит список объектов, которые поддерживают интерфейс IProductItem(чтобы иметь доступ к методам конвертации).
+### 3. Basket. Наследуется от базового класса Model. Представляет собой модель для коллекции товаров в корзине, используется для хранения и обработки данных о товарах в корзине.
+Хранит список объектов, которые поддерживают интерфейс IProduct.
 В корзину нельзя добавить 2 или более одинаковых товаров. При добавлении или удалении товаров генерируется событие
-'basket:items-changed', после чего BasketItemView и BasketView перерисовывает элементы корзины.
-#### Конструктор не принимает аргументов.
+'basket:items-changed', после чего BasketCard и BasketView перерисовывают элементы корзины.
+#### Конструктор принимает такие аргументы:
++ `data: Partial<T>` - объект с входными данными. Partial делает поля типа T опциональными.
++ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Содержит следующие поля:
 + `_items: IProduct[]` - массив объектов - товаров.
 
 #### Имеет методы:
-+ `add(product: IProduct): void` - добавить товар в корзину.
++ `add(item: IProduct): void` - добавить товар в корзину.
 + `remove(id: string): void` - удалить товар из корзины по id.
++ `contains(id: string): boolean` - проверить содержится ли товар с данным id в корзине.
++ `clear(): void` - очистить корзину.
 + `get items(): IProduct[]` - получить массив объектов - товаров из защищенного свойства items.
-+ `get total(): number` - получить количество товаров в каталоге.
++ `get total(): number` - получить общую стоимость всех товаров в корзине.
++ `get length(): number` - получить длинну массива _items.
++ `getIdList(): string[]` - получить массив id в виде строк.
 
-### 5. Order. Наследуется от базового класса Model. Представляет собой модель для заказа, используется для хранения и обработки данных о заказе.
+### 4. Order. Представляет собой модель для заказа, используется для хранения и обработки данных о заказе.
 #### Конструктор не принимает аргументов.
 
 #### Содержит следующие поля:
-+ `_paymentMethod: PaymentMethod` - способ оплаты.
-+ `_address: string` - адрес.
-+ `_email: string` - email.
-+ `_phone: string` - номер телефона.
++ `protected _payment: PaymentMethod` - способ оплаты.
++ `protected _address: string` - адрес.
++ `protected _email: string` - email.
++ `protected _phone: string` - номер телефона.
++ `protected _total: number` - общая стоимость всех товаров в заказе.
++ `protected _items: string[]` - список id товаров в виде строк.
 
 #### Имеет методы:
-+ `get paymentMethod(): PaymentMethod` - возвращает способ оплаты.
-+ `set paymentMethod(paymentMethodData: PaymentMethod): void` - устанавливает способ оплаты.
-+ `get address(): string` - возвращает адрес.
-+ `set address(addressData: string): void` - устанавливает адрес.
-+ `get email(): string` - возвращает email.
-+ `set email(emailData: string): void` - устанавливает email.
-+ `get phone(): string` - возвращает номер телефона.
-+ `set phone(phoneData: string): void` - устанавливает номер телефона.
++ `set payment(value: PaymentMethod): void` - устанавливает способ оплаты.
++ `set address(value: string): void` - устанавливает адрес.
++ `set email(value: string): void` - устанавливает email.
++ `set phone(value: string): void` - устанавливает номер телефона.
++ `set total(value: number): void` - устанавливает общую стоимость товаров в заказе.
++ `set items(list: string[]): void` - устанавливает список товаров заказа в виде массива из id.
++ `toApiObject(): IOrderData` - возвращает объект, пригодный для отправки api post запроса.
 
-### 6. OrderBuilder. Представляет собой билдер для Order и реализует паттерн "builder". Нужен для поэтапного формирования заказа.
-#### Конструктор не принимает аргументов.
+### 5. OrderBuilder. Представляет собой билдер для Order и реализует паттерн "builder". Нужен для поэтапного формирования заказа.
+#### Конструктор принимает такие аргументы:
++ `data: Partial<T>` - объект с входными данными. Partial делает поля типа T опциональными.
++ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Содержит следующие поля:
-+ `order: IOrder` - экземпляр класса Order, который позже будет модифицирован методами.
++ `protected order: IOrder;` - экземпляр класса Order, который позже будет модифицирован методами.
 
 #### Методы (они же этапы формирования заказа):
-+ `setDelivery(delivery: IDelivery): void` - установка данных о доставке (адрес, способ оплаты).
-+ `setContacts(contacts: IContacts): void` - установка контактных данных (телефон, email).
-+ `setOrderList(orderList: IOrderList)` - установка данных о купленных товарах.
-+ `getResult(): IOrder` - возвращает объект заказа.
++ `set delivery(delivery: IDelivery): void` - установка данных о доставке (адрес, способ оплаты).
++ `set contacts(contacts: IContacts): void` - установка контактных данных (телефон, email).
++ `set orderList(orderList: IOrderList): void` - установка данных о купленных товарах.
++ `get result(): IOrder` - возвращает объект заказа.
 
 ## Компоненты представления:
 
@@ -205,9 +204,9 @@ yarn build
 + `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Содержит следующие поля:
-+ `closeButton: HTMLButtonElement` - кнопка закрытия модального окна.
-+ `content: HTMLElement` - содержимое модального окна.
-+ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
++ `protected _closeButton: HTMLButtonElement` - кнопка закрытия модального окна.
++ `protected _content: HTMLElement` - содержимое модального окна.
++ `protected events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Имеет методы:
 + `set content(value: HTMLElement): void` - нужен, чтобы менять контент модального окна. Так как в проекте существует 5 видов модальных окон (информация о товаре,
@@ -220,186 +219,266 @@ yarn build
 Имеет свойство, хранящий html элемент кнопки формы - submit. При вводе чего-либо в текстовом поле или при нажатии кнопки submit генерируются
 соответствующие события через брокер событий.
 #### Конструктор принимает такие аргументы:
-`container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.
-`events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
++ `container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.
++ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Содержит следующие поля:
-`submitButton: HTMLButtonElement` - кнопка отправки формы.
-`events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
++ `protected container: HTMLFormElement` - контейнер формы, переданный в конструкторе.
++ `protected inputList: HTMLInputElement[]` - список input элементов формы.
++ `protected _submit: HTMLButtonElement` - кнопка отправки формы.
++ `protected _error: HTMLSpanElement` - элемент для отображения ошибок формы.
++ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Имеет методы:
-`set valid(value: boolean)` - для блокировки / разблокировки кнопки submit.
++ `get valid(): boolean` - получения статуса валидности формы.
++ `set valid(value: boolean)` - для блокировки / разблокировки кнопки submit.
++ `set error(value: string)` - установка текста ошибок.
++ `clear()` - очистка формы.
++ `render(data?: Partial<T> & IFormState): HTMLElement` - отображение формы на странице, с присвоением нужных свойств.
++ `emitInput()` - оповещении о вводе текста формы.
 
-3. CardView. Наследуется от базового класса View. Отвечает за ui элемент карточки на главной странице и действий над ним. Содержит поля - html элементы, такие как
-категория товара, имя товара, изображение товара, цена товара и геттеры / сеттеры для них. Сеттеры нужны для автоматического назначения значений в html элементы при вызове метода render.
-При клике на карточку генерируется событие 'card:select'.
+### 3. Page. Наследуется от базового класса View. Отвечает за общие элементы страницы(кнопка корзины, список карточек, счётчик товаров в корзине).
 #### Конструктор принимает такие аргументы:
-+ `blockName: string` - БЭМ имя блока для поиска элементов внутри container через querySelector.
 + `container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.
-+ `actions?: ICardActions` - объект c обработчиком события на клик.
++ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Содержит следующие поля:
-+ `_category: string` - категория товара.
-+ `_title: string` - имя товара.
-+ `_image: string` - ссылка на изображение товара.
-+ `_price: string` - цена товара в виде строки.
++ `protected container: HTMLFormElement` - контейнер элемента, переданный в конструкторе.
++ `protected _basketButton: HTMLElement` - кнопка корзины, расположенная в элементе header.
++ `protected _catalog: HTMLElement` - список карточек на главной странице.
++ `protected _counter: HTMLSpanElement` - счётчик количества товаров в корзине.
++ `protected _wrapper: HTMLDivElement` - html элемент для обеспечения блокировку прокрутки.
++ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
+
+#### Имеет методы:
++ `set catalog(items: HTMLElement[])` - устанавливает переданный список карточек как массив html элементов в элемент списка карточек посредством replaceChildren.
++ `set counter(value: string)` - устанавливает значение в счётчике товаров корзины.
++ `lockScroll(state: boolean): void` - блокировка прокрутки.
+
+### 4. Card. Наследуется от базового класса View. Является базовым классом для всех классов - карточек. Отвечает за ui элемент карточки и действий над ним. Содержит поля - html элементы, такие как категория товара, имя товара, изображение товара, цена товара и геттеры / сеттеры для них. Сеттеры нужны для автоматического назначения значений в html элементы при вызове метода render.
+#### Конструктор принимает такие аргументы:
++ `container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.
++ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
+
+#### Содержит следующие поля:
++ `protected _id: string` - id товара.
++ `protected _title: HTMLHeadingElement` - html элемент, отвечающий за отображение имени товара.
++ `protected _price: HTMLSpanElement` - html элемент, отвечающий за отображение цены товара.
++ `protected events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Содержит методы:
-+ `get category(): string` - возвращает категорию товара.
-+ `set category(catagoryData: string): void` - устанавливает категорию товара.
++ `get id(): string` - возвращает id товара.
++ `set id(value: string)` - устанавливает id товара в поле _id.
 + `get title(): string` - возвращает имя товара.
-+ `set title(titleData: string): void` - устанавливает имя товара.
-+ `get image(): string` - возвращает ссылку на изображение товара.
-+ `set image(imageData: string): void` - устанавливает ссылку на изображение товара.
++ `set title(titleData: string): void` - устанавливает имя товара в html элемент _title.
 + `get price(): string` - возвращает цену товара.
-+ `set price(priceData: string): void` - устанавливает цену товара.
-+ `lockButton(): void` - блокировка кнопки.
++ `set price(priceData: string): void` - устанавливает цену товара в html элемент _price.
 
-### 4. CatalogView. Наследуется от базового класса View. Отвечает за отображение контейнера для карточек на главной странице.
+### 5. CatalogCard. Наследуется от класса Card. Отвечает за ui элемент карточки на главной странице и действий над ним. Содержит поля - html элементы, такие как категория товара, имя товара, изображение товара, цена товара и геттеры / сеттеры для них. Сеттеры нужны для автоматического назначения значений в html элементы при вызове метода render. При клике на карточку генерируется событие 'card:select'.
 #### Конструктор принимает такие аргументы:
 + `container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.
 + `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Содержит следующие поля:
-+ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
-+ `items: IProductCardUI` - массив объектов товара в удобном для данного класса формате.
++ `protected _category: HTMLSpanElement` - html элемент, отвечающий за отображение категории товара.
++ `protected _image: HTMLImageElement` - html элемент, отвечающий за отображение изображения товара.
 
 #### Содержит методы:
-+ `set items(card: IProductCardUI): void` - для установки элементов (списка карточек).
++ `protected toggleCategoryClass(value: string): void` - назначает соответствующий класс - модификатор на html элемент категории.
++ `get category()` - возвращает категорию товара.
++ `set category(value: string)` - устанавливает категорию товара в html элемент _category.
++ `set image(value: string): void` - устанавливает изображение товара в html элемент _image.
 
-### 5. BasketItemView. Наследуется от базового класса View. Отвечает за отображение отдельного товара в корзине.
-При клике по кнопке удаления генерируется событие 'basket:item-changed'.
-#### Конструктор принимает такие аргументы:
-+ `blockName: string` - БЭМ имя блока для поиска элементов внутри container через querySelector.
-+ `container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.
-+ `actions?: IBasketItemActions` - объект c обработчиком события на клик.
-
-#### Содержит следующие поля:
-+ `_title: string` - имя товара.
-+ `_price: string` - цена товара в виде строки.
-+ `button: HTMLElement` - кнопка удаления.
-
-#### Содержит методы:
-+ `get title(): string` - возвращает имя товара.
-+ `set title(titleData: string): void` - устанавливает имя товара.
-+ `get price(): string` - возвращает цену товара.
-+ `set price(priceData: string): void` - устанавливает цену товара.
-
-6. BasketView.
-Наследуется от базового класса View. Отвечает за отображение контейнера c корзиной. Кнопка "оформить"  активна, если  в корзине есть товары. При клике на кнопку у объекта OrderBuilder вызывается метод setOrderList.
+### 6. PreviewCard. Наследуется от класса CatalogCard. Отвечает за ui элемент карточки в модальном окне после клика по карточке на главной странице. Содержит поля - html элементы, такие как категория товара, имя товара, изображение товара, цена товара и геттеры / сеттеры для них. Сеттеры нужны для автоматического назначения значений в html элементы при вызове метода render.
 #### Конструктор принимает такие аргументы:
 + `container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.
 + `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Содержит следующие поля:
-+ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
-+ `items: IBasketItemUI` - массив объектов - товаров в удобном для данного класса формате.
++ `protected _description: HTMLParagraphElement` - html элемент, отвечающий за отображение описания товара.
++ `protected button: HTMLButtonElement` - кнопка "купить" или "удалить".
 
 #### Содержит методы:
-+ `set items(card: IBasketItemUI): void` - для установки элементов (списка товаров в корзине).
++ `set description(value: string): void` - устанавливает описание товаара в html элемент _description.
++ `set valid(state: boolean): void` - устанавливает валидность ui элемента, отключая кнопка. В данном случае кнопка отключается если в модальном окне открыт бесценный товар.
++ `set state(state: boolean): void` - устанавливает состояние кнопки, может быть всего 2 варианта: купить(true), удалить(false).
 
-## Также необходимы дополнительные компоненты для формирования контента модальных окон, такие как ProductView, BasketView(описано ранее), DeliveryView, ContactsView, SuccessView. Содержимое будет передано в сеттер контента Modal.
 
-### 1. ProductView Наследуется от базового класса View. Отображает подробную информацию о товаре после клика по карточке(название товара, категория, изображение, цена)
-и кнопку "купить".
-При клике на эту кнопку генерируется событие "basket:items-changed".
+### 7. BasketCard. Наследуется от класса Card. Отвечает за отображение отдельного товара в корзине. При клике по кнопке удаления генерируется событие 'basket:item-changed'.
 #### Конструктор принимает такие аргументы:
 + `container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.
-+ `actions?: IProductActions` - объект c обработчиком события на клик.
++ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Содержит следующие поля:
-+ `button: HTMLElement` - кнопка "купить".
++ `protected _index: HTMLSpanElement;` - html элемент, отвечающий за отображение порядкового номера товара в корзине.
++ `protected button: HTMLButtonElement` - кнопка удаления товара из корзины.
 
-#### Своих методов не имеет, но выполняет коллбэк, приходящий в конструктор.
+#### Содержит методы:
++ `set index(value: number): void` - установка порядкового номера в html
 
-### 2. DeliveryView. Наследуется от класса Form. Представляет собой форму для ввода данных о доставке (способ оплаты, адрес) и кнопку "далее". Кнопка становится активна после ввода всех требуемых данных. При клике на кнопку у объекта OrderBuilder вызывается метод setDelivery.
+### 8. BasketView. Наследуется от базового класса View. Отвечает за отображение контейнера c корзиной. Кнопка "оформить"  активна, если  в корзине есть товары. При клике на кнопку у объекта OrderBuilder вызывается метод `set orderList(orderList: IOrderList)`.
 #### Конструктор принимает такие аргументы:
 + `container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.
-+ `actions?: IDeliveryActions` - объект c обработчиком события на клик.
++ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Содержит следующие поля:
-+ `submitButton: HTMLElement` - кнопка "далее".
++ `protected _list: HTMLElement` - html элемент, отвечающий за отображение списка карточек.
++ `protected _price: HTMLSpanElement;` - html элемент, отвечающий за отображение общей стоимости товаров.
++ `protected button: HTMLButtonElement` - кнопка "оформить".
++ `protected events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
-#### Своих методов не имеет, но выполняет коллбэк, приходящий в конструктор.
+#### Содержит методы:
++ `set list(items: HTMLElement[]): void` - для установки элементов (html списка карточек в корзине) посредством replaceChildren.
++ `set valid(state: boolean)` - устанавливает валидность ui элемента, блокируя кнопку. В данном случае кнопка блокоируется, если корзина пуста.
++ `set price(value: number)` - устанавливает общую стоимость товаров в html элемент _price.
 
-### 3. ContactsView.
-Наследуется от класса Form. Представляет собой форму для ввода контактных данных (email, телефон) и кнопку "далее". Кнопка становится активна после
-ввода всех требуемых данных. При клике на кнопку у объекта OrderBuilder вызывается метод setContacts.
+### 9. OrderView. Наследуется от базового класса Form. Отвечает за ui элемент формы заказа(адрес, способ оплаты).
 #### Конструктор принимает такие аргументы:
 + `container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.
-+ `actions?: IContactsActions` - объект c обработчиком события на клик.
++ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Содержит следующие поля:
-+ `submitButton: HTMLElement` - кнопка "далее".
++ `protected buttonContainer: HTMLDivElement` - контейнер, содержащий кнопки "онлайн" и "при получении".
++ `protected onlineButton: HTMLButtonElement;` - кнопка "онлайн".
++ `protected cashButton: HTMLButtonElement` - кнопка "при получении".
 
-#### Своих методов не имеет, но выполняет коллбэк, приходящий в конструктор.
+#### Содержит методы:
++ `protected getActiveButton(): HTMLButtonElement | null` - возвращает кнопку , у которой активен класс 'button_alt-active', либо undefined , если этот класс не активен не у одной кнопки.
++ `clear(): void` - Очищает форму и снимает класс 'button_alt-active' с обеих кнопок.
++ `get payment(): string` - возращает способ оплаты в зависимости от нажатой кнопки.
++ `get address(): string` - возвращает адрес из поля ввода address.
++ `get valid(): boolean` - возвращает валидность формы. В данном случае форма валидна, если была нажата одна из кнопок и в поле ввода не пустое значение.
++ `set valid(value: boolean)` - устанавливает валидность формы, блокируя кнопку. В данном случае форма валидна, если была нажата одна из кнопок и в поле ввода не пустое значение.
 
-### 4. SuccessView. Наследуется от класса View. Представляет собой окно для показа информации об успешной покупке, содержит кнопку "за новыми покупками!". При клике на кнопку модальное окно закрывается, корзина очищается.
+### 10. ContactsView. Наследуется от базового класса Form. Отвечает за ui элемент формы контактов(email, телефон).
 #### Конструктор принимает такие аргументы:
 + `container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.
-+ `actions?: ISuccessActions` - объект c обработчиком события на клик.
++ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
+
+#### Cобственных уникальных полей не имеет.
+
+#### Содержит методы:
++ `get email(): string` - возвращает email из поля ввода email.
++ `get phone(): string` - возвращает номер телефона из поля ввода phone.
+
+### 11. SuccessView. Наследуется от класса View. Представляет собой окно для показа информации об успешной покупке, содержит кнопку "за новыми покупками!". При клике на кнопку модальное окно закрывается, корзина очищается.
+#### Конструктор принимает такие аргументы:
++ `container: HTMLElement` - DOM элемент, контейнер для дочерних элементов.
++ `events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
 
 #### Содержит следующие поля:
-+ `button: HTMLElement` - кнопка "За новыми покупками!".
++ `protected button: HTMLButtonElement;` - кнопка "за новыми покупками".
++ `protected events: IEvents` - объект, являющимся брокером событий, поддерживает интерфейс IEvents.
++ `protected description: HTMLParagraphElement` - html элемент, отвечающий за отображение потраченных средств. Например, списано 1200 синапсов.
 
-#### Своих методов не имеет, но выполняет коллбэк, приходящий в конструктор.
+#### Содержит методы:
++ `set total(value: number)` - устанавливает количество потраченных средств в html элемент description.
 
 ## Основные типы / интерфейсы:
 ```
-interface IProductItem {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  price: number;
-  image: string;
+interface IModel {
+	emitChanges(event: string, data?: object): void;
 }
 
-interface IProductItemUI {
-  title: string;
-  description: string;
-  category: string;
-  price: string;
-  image: string;
+interface IView<T> {
+	toggleClass(element: HTMLElement, className: string, force?: boolean): void;
+	setText(element: HTMLElement, value: unknown): void;
+	setDisabled(element: HTMLElement, state: boolean): void;
+	setHidden(element: HTMLElement): void;
+	setVisible(element: HTMLElement): void;
+	setImage(element: HTMLElement, src: string, alt?: string): void;
+	render(data?: Partial<T>): HTMLElement;
 }
-type IProductCardUI = Pick<IProductItemUI, 'title' | 'category' | 'price' | 'image'>
-type IBasketItemUI = Pick<IProductItemUI, 'title' | 'price'>;
 
+interface IProduct {
+	id: string;
+	title: string;
+	description: string;
+	category: string;
+	price: number;
+	image: string;
+}
 
-type PaymentMethod = 'cash' | 'online';
+interface IIdentifier {
+	id: string;
+}
+
+type ICatalogCard = Omit<IProduct, 'description'>;
+type IPreviewCard = IProduct & { valid: boolean; state: boolean };
+type IBasketCard = Omit<IProduct, 'description' | 'category' | 'image'> & {
+	index: number;
+};
+
+type PaymentMethod = 'cash' | 'card';
 
 interface IDelivery {
-  payment: PaymentMethod;
-  address: string;
+	payment: PaymentMethod;
+	address: string;
 }
 
 interface IContacts {
-  email: string;
-  phone: string;
+	email: string;
+	phone: string;
 }
 
 interface IOrderList {
-  total: number;
-  items: string[];
+	total: number;
+	items: string[];
 }
 
-type IOrder = IDelivery & IContacts & IOrderList;
+type IOrderData = IDelivery & IContacts & IOrderList;
 
 interface IOrderBuilder {
-  setDelivery(delivery: IDelivery): void;
-  setContacts(contacts: IContacts):void;
-  setOrderList(orderList: IOrderList): void;
-  getResult(): IOrder;
+	delivery: IDelivery;
+	contacts: IContacts;
+	orderList: IOrderList;
+	result: IOrderData;
 }
 
 interface IOrderResult {
-  id: string;
-  total: number;
+	id: string;
+	total: number;
 }
 
 interface IShopApi {
-  getProductList(): Promise<IProductItem[]>;
-  getProductItem(id:string): Promise<IProductItem>;
-  postOrder(order: IOrder): Promise<IOrderResult>;
+	getProductList(): Promise<IProduct[]>;
+	getProductItem(id: string): Promise<IProduct>;
+	postOrder(order: IOrderData): Promise<IOrderResult>;
 }
+
+interface IFormState {
+	valid: boolean;
+	error: string;
+}
+
+interface IForm extends IFormState {
+	render(data?: IFormState): HTMLElement;
+}
+
+interface IInputData {
+	field: string;
+	value: string;
+}
+
+export type {
+	IModel,
+	IView,
+	IShopApi,
+	IProduct,
+	IIdentifier,
+	ICatalogCard,
+	IPreviewCard,
+	IBasketCard,
+	PaymentMethod,
+	IOrderData,
+	IContacts,
+	IOrderResult,
+	IOrderList,
+	IOrderBuilder,
+	IDelivery,
+	IFormState,
+	IForm,
+	IInputData,
+};
+
 ```

@@ -56,10 +56,24 @@ const contactsUI = new ContactsView(cloneTemplate(contactsTemplate), emitter);
 const successUI = new SuccessView(cloneTemplate(successTemplate), emitter);
 
 function validate(form: IForm) {
-	const errorText = !form.valid ? INPUT_ERROR_TEXT : '';
+	const errorText = getErrorText(form);
 	const validity: IFormState = { valid: form.valid, error: errorText };
 	form.render(validity);
 }
+
+function getErrorText(form: IForm) {
+  const errorText = !form.valid ? INPUT_ERROR_TEXT : '';
+  return errorText;
+}
+
+emitter.on('modal:open', () => {
+  page.lockScroll(true);
+});
+
+emitter.on('modal:close', () => {
+  page.lockScroll(false);
+
+})
 
 emitter.on('catalog:items-changed', (data: IProduct[]) => {
 	const cardList = data.map((item) => {
@@ -124,8 +138,9 @@ emitter.on('order:open', () => {
 		items: basket.getIdList(),
 	};
 	orderBuilder.orderList = orderList;
+
 	modal.render({
-		content: orderUI.render({ valid: orderUI.valid, error: '' }),
+		content: orderUI.render({ valid: orderUI.valid, error: getErrorText(orderUI) }),
 	});
 });
 
@@ -140,7 +155,7 @@ emitter.on('order:submit', () => {
 	};
 	orderBuilder.delivery = deliveryData;
 	modal.render({
-		content: contactsUI.render({ valid: contactsUI.valid, error: '' }),
+		content: contactsUI.render({ valid: contactsUI.valid, error: getErrorText(contactsUI) }),
 	});
 });
 

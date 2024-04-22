@@ -30,10 +30,12 @@ class Modal extends View<IModal> {
 
 	open() {
 		this.toggleClass(this.container, 'modal_active', true);
+    this.events.emit('modal:open');
 	}
 
 	close() {
 		this.toggleClass(this.container, 'modal_active', false);
+    this.events.emit('modal:close');
 	}
 
 	set content(value: HTMLElement) {
