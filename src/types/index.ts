@@ -1,5 +1,3 @@
-import { IEvents } from '../components/base/events';
-
 interface IModel {
 	emitChanges(event: string, data?: object): void;
 }
@@ -23,19 +21,20 @@ interface IProduct {
 	image: string;
 }
 
-interface IBasketItem extends IProduct {
-	index: number;
+interface IIdentifier {
+	id: string;
 }
+
+type ICatalogCard = Omit<IProduct, 'description'>;
+type IPreviewCard = IProduct & { valid: boolean; state: boolean };
+type IBasketCard = Omit<IProduct, 'description' | 'category' | 'image'> & {
+	index: number;
+};
 
 type PaymentMethod = 'cash' | 'card';
 
 interface IDelivery {
 	payment: PaymentMethod;
-	address: string;
-}
-
-interface IDeliveryForm {
-	payment: string;
 	address: string;
 }
 
@@ -69,17 +68,13 @@ interface IShopApi {
 	postOrder(order: IOrderData): Promise<IOrderResult>;
 }
 
-interface IClickActions {
-	onClick: (event: MouseEvent) => void;
-}
-
 interface IFormState {
 	valid: boolean;
 	error: string;
 }
 
-interface IForm<T> extends IFormState {
-  render(data?: IFormState): HTMLElement;
+interface IForm extends IFormState {
+	render(data?: IFormState): HTMLElement;
 }
 
 interface IInputData {
@@ -92,17 +87,18 @@ export type {
 	IView,
 	IShopApi,
 	IProduct,
+	IIdentifier,
+	ICatalogCard,
+	IPreviewCard,
+	IBasketCard,
 	PaymentMethod,
-	IBasketItem,
 	IOrderData,
-  IContacts,
+	IContacts,
 	IOrderResult,
-  IOrderList,
-  IOrderBuilder,
+	IOrderList,
+	IOrderBuilder,
 	IDelivery,
-  IDeliveryForm,
-	IClickActions,
 	IFormState,
-  IForm,
+	IForm,
 	IInputData,
 };

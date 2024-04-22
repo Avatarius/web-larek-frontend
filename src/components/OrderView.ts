@@ -1,7 +1,7 @@
 import { ensureAllElements, ensureElement } from '../utils/utils';
 import { IEvents } from './base/events';
-import { Form } from './common/Form';
-import { IContacts, IDelivery, PaymentMethod } from '../types';
+import { Form } from './common/FormView';
+import { IContacts, IDelivery } from '../types';
 
 class OrderView extends Form<IDelivery> {
 	protected buttonContainer: HTMLDivElement;
@@ -39,6 +39,12 @@ class OrderView extends Form<IDelivery> {
 			return null;
 		}
 	}
+
+  clear(): void {
+    super.clear();
+    this.toggleClass(this.onlineButton, 'button_alt-active', false);
+    this.toggleClass(this.cashButton, 'button_alt-active', false);
+  }
 
 	get payment(): string {
 		const buttonActive = this.getActiveButton();
