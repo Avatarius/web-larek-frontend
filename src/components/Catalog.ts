@@ -1,6 +1,6 @@
 import { Model } from './base/Model';
 import { IProduct } from '../types';
-import { IEvents } from './base/events';
+import { IEvents } from './base/Events';
 
 interface ICatalogData {
 	items: IProduct[];

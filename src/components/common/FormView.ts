@@ -1,6 +1,6 @@
 import { ensureAllElements, ensureElement } from '../../utils/utils';
 import { View } from '../base/View';
-import { IEvents } from '../base/events';
+import { IEvents } from '../base/Events';
 import { IFormState } from '../../types';
 
 class Form<T> extends View<IFormState> {

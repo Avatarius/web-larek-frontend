@@ -1,6 +1,6 @@
 import { ensureElement } from '../../utils/utils';
 import { View } from '../base/View';
-import { IEvents } from '../base/events';
+import { IEvents } from '../base/Events';
 
 interface IModal {
 	content: HTMLElement;
@@ -20,7 +20,7 @@ class Modal extends View<IModal> {
 		);
 		this._content = ensureElement<HTMLDivElement>('.modal__content', container);
 		this._closeButton.addEventListener('click', () => this.close());
-		document.addEventListener('mousedown', (evt: MouseEvent) => {
+		this.container.addEventListener('mousedown', (evt: MouseEvent) => {
 			const target = evt.target as HTMLElement;
 			if (target.classList.contains('modal')) {
 				this.close();
@@ -30,12 +30,12 @@ class Modal extends View<IModal> {
 
 	open() {
 		this.toggleClass(this.container, 'modal_active', true);
-    this.events.emit('modal:open');
+		this.events.emit('modal:open');
 	}
 
 	close() {
 		this.toggleClass(this.container, 'modal_active', false);
-    this.events.emit('modal:close');
+		this.events.emit('modal:close');
 	}
 
 	set content(value: HTMLElement) {

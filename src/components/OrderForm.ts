@@ -1,12 +1,13 @@
 import { ensureAllElements, ensureElement } from '../utils/utils';
-import { IEvents } from './base/events';
+import { IEvents } from './base/Events';
 import { Form } from './common/FormView';
 import { IContacts, IDelivery } from '../types';
 
-class OrderView extends Form<IDelivery> {
+class OrderForm extends Form<IDelivery> {
 	protected buttonContainer: HTMLDivElement;
 	protected onlineButton: HTMLButtonElement;
 	protected cashButton: HTMLButtonElement;
+	protected addressInput: HTMLInputElement;
 
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
@@ -18,16 +19,31 @@ class OrderView extends Form<IDelivery> {
 			'.button_alt',
 			container
 		);
+		this.addressInput = this.container.elements.namedItem(
+			'address'
+		) as HTMLInputElement;
 
 		this.buttonContainer.addEventListener('click', (evt) => {
 			if (evt.target === this.onlineButton || evt.target === this.cashButton) {
 				const button = evt.target as HTMLButtonElement;
-				this.toggleClass(this.onlineButton, 'button_alt-active', false);
-				this.toggleClass(this.cashButton, 'button_alt-active', false);
+				this.resetButtons();
 				this.toggleClass(button, 'button_alt-active', true);
 				this.emitInput();
 			}
 		});
+	}
+
+	protected toggleCard(state = true) {
+		this.toggleClass(this.onlineButton, 'button_alt-active', state);
+	}
+
+	protected toggleCash(state = true) {
+		this.toggleClass(this.cashButton, 'button_alt-active', state);
+	}
+
+	protected resetButtons() {
+		this.toggleCard(false);
+		this.toggleCash(false);
 	}
 
 	protected getActiveButton(): HTMLButtonElement | null {
@@ -40,11 +56,10 @@ class OrderView extends Form<IDelivery> {
 		}
 	}
 
-  clear(): void {
-    super.clear();
-    this.toggleClass(this.onlineButton, 'button_alt-active', false);
-    this.toggleClass(this.cashButton, 'button_alt-active', false);
-  }
+	clear(): void {
+		super.clear();
+		this.resetButtons();
+	}
 
 	get payment(): string {
 		const buttonActive = this.getActiveButton();
@@ -53,8 +68,7 @@ class OrderView extends Form<IDelivery> {
 	}
 
 	get address(): string {
-		return (this.container.elements.namedItem('address') as HTMLInputElement)
-			.value;
+		return this.addressInput.value;
 	}
 
 	get valid(): boolean {
@@ -67,20 +81,27 @@ class OrderView extends Form<IDelivery> {
 	}
 }
 
-class ContactsView extends Form<IContacts> {
+class ContactsForm extends Form<IContacts> {
+	protected emailInput: HTMLInputElement;
+	protected phoneInput: HTMLInputElement;
+
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
+		this.emailInput = this.container.elements.namedItem(
+			'email'
+		) as HTMLInputElement;
+		this.phoneInput = this.container.elements.namedItem(
+			'phone'
+		) as HTMLInputElement;
 	}
 
 	get email(): string {
-		return (this.container.elements.namedItem('email') as HTMLInputElement)
-			.value;
+		return this.emailInput.value;
 	}
 
 	get phone(): string {
-		return (this.container.elements.namedItem('phone') as HTMLInputElement)
-			.value;
+		return this.phoneInput.value;
 	}
 }
 
-export { OrderView, ContactsView };
+export { OrderForm, ContactsForm };

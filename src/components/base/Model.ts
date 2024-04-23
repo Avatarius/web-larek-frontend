@@ -1,5 +1,5 @@
 import { IModel } from "../../types";
-import { IEvents } from "./events";
+import { IEvents } from "./Events";
 
 
 

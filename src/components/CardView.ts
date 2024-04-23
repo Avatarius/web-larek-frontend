@@ -1,8 +1,12 @@
 import { View } from './base/View';
 import { ensureElement } from '../utils/utils';
 import { IPreviewCard, IBasketCard } from '../types';
-import { BUY_BUTTON_TEXT, REMOVE_BUTTON_TEXT } from '../utils/constants';
-import { IEvents } from './base/events';
+import {
+	BUY_BUTTON_TEXT,
+	REMOVE_BUTTON_TEXT,
+	UNABLE_BUTTON_TEXT,
+} from '../utils/constants';
+import { IEvents } from './base/Events';
 
 class Card<T> extends View<T> {
 	protected _title: HTMLHeadingElement;
@@ -111,13 +115,21 @@ class PreviewCard extends CatalogCard<IPreviewCard> {
 		this.setText(this._description, value);
 	}
 
+	get valid() {
+		return !this.button.disabled;
+	}
+
 	set valid(state: boolean) {
 		this.setDisabled(this.button, !state);
 	}
 
 	set state(state: boolean) {
-		const text = state ? BUY_BUTTON_TEXT : REMOVE_BUTTON_TEXT;
-		this.setText(this.button, text);
+		if (!this.valid) {
+			this.setText(this.button, UNABLE_BUTTON_TEXT);
+		} else {
+			const text = state ? BUY_BUTTON_TEXT : REMOVE_BUTTON_TEXT;
+			this.setText(this.button, text);
+		}
 	}
 }
 

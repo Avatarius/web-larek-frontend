@@ -7,7 +7,7 @@ import {
 	PaymentMethod,
 } from '../types';
 import { Model } from './base/Model';
-import { IEvents } from './base/events';
+import { IEvents } from './base/Events';
 
 interface IOrder extends IOrderData {
 	toApiObject(): IOrderData;

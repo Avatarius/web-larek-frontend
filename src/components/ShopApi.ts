@@ -1,5 +1,5 @@
 import { IShopApi, IProduct, IOrderData, IOrderResult } from '../types';
-import { Api, ApiListResponse } from './base/api';
+import { Api, ApiListResponse } from './base/Api';
 
 class ShopApi extends Api implements IShopApi {
 	protected readonly cdn: string;

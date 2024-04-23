@@ -3,7 +3,7 @@ import { cloneTemplate, ensureElement } from './utils/utils';
 import { ShopApi } from './components/ShopApi';
 import { CDN_URL, API_URL } from './utils/constants';
 import { Catalog } from './components/Catalog';
-import { EventEmitter } from './components/base/events';
+import { EventEmitter } from './components/base/Events';
 import { CatalogCard, PreviewCard, BasketCard } from './components/CardView';
 import {
 	ICatalogCard,
@@ -22,8 +22,8 @@ import { Page } from './components/PageView';
 import { Modal } from './components/common/ModalView';
 import { Basket } from './components/Basket';
 import { BasketView } from './components/BasketView';
-import { ContactsView, OrderView } from './components/OrderView';
-import { INPUT_ERROR_TEXT } from './utils/constants';
+import { ContactsForm, OrderForm } from './components/OrderForm';
+import { INPUT_ERROR_TEXT, EVENTS } from './utils/constants';
 import { SuccessView } from './components/SuccessView';
 import { OrderBuilder } from './components/Order';
 
@@ -51,8 +51,8 @@ const page = new Page(pageContent, emitter);
 const modal = new Modal(modalContainer, emitter);
 const previewUI = new PreviewCard(cloneTemplate(cardPreviewTemplate), emitter);
 const basketUI = new BasketView(cloneTemplate(basketTemplate), emitter);
-const orderUI = new OrderView(cloneTemplate(orderTemplate), emitter);
-const contactsUI = new ContactsView(cloneTemplate(contactsTemplate), emitter);
+const orderUI = new OrderForm(cloneTemplate(orderTemplate), emitter);
+const contactsUI = new ContactsForm(cloneTemplate(contactsTemplate), emitter);
 const successUI = new SuccessView(cloneTemplate(successTemplate), emitter);
 
 function validate(form: IForm) {
@@ -62,20 +62,19 @@ function validate(form: IForm) {
 }
 
 function getErrorText(form: IForm) {
-  const errorText = !form.valid ? INPUT_ERROR_TEXT : '';
-  return errorText;
+	const errorText = !form.valid ? INPUT_ERROR_TEXT : '';
+	return errorText;
 }
 
-emitter.on('modal:open', () => {
-  page.lockScroll(true);
+emitter.on(EVENTS.ModalOpen, () => {
+	page.lockScroll(true);
 });
 
-emitter.on('modal:close', () => {
-  page.lockScroll(false);
+emitter.on(EVENTS.ModalClose, () => {
+	page.lockScroll(false);
+});
 
-})
-
-emitter.on('catalog:items-changed', (data: IProduct[]) => {
+emitter.on(EVENTS.CatalogItemsChanged, (data: IProduct[]) => {
 	const cardList = data.map((item) => {
 		const card = new CatalogCard<ICatalogCard>(
 			cloneTemplate(cardTemplate),
@@ -86,7 +85,7 @@ emitter.on('catalog:items-changed', (data: IProduct[]) => {
 	page.render({ catalog: cardList });
 });
 
-emitter.on('card:select', (data: IIdentifier) => {
+emitter.on(EVENTS.CardSelect, (data: IIdentifier) => {
 	modal.open();
 	const product = catalog.find(data.id);
 	if (product) {
@@ -98,7 +97,7 @@ emitter.on('card:select', (data: IIdentifier) => {
 	}
 });
 
-emitter.on('basket:open', () => {
+emitter.on(EVENTS.BasketOpen, () => {
 	modal.open();
 	modal.render({
 		content: basketUI.render({
@@ -108,16 +107,16 @@ emitter.on('basket:open', () => {
 	});
 });
 
-emitter.on('basket:add', (data: IIdentifier) => {
+emitter.on(EVENTS.BasketAdd, (data: IIdentifier) => {
 	const product = catalog.find(data.id);
 	basket.add(product);
 });
 
-emitter.on('basket:remove', (data: IIdentifier) => {
+emitter.on(EVENTS.BasketRemove, (data: IIdentifier) => {
 	basket.remove(data.id);
 });
 
-emitter.on('basket:items-changed', (data: IIdentifier) => {
+emitter.on(EVENTS.BasketItemsChanged, (data: IIdentifier) => {
 	previewUI.render({ valid: true, state: !basket.contains(data.id) });
 	page.render({ counter: basket.length });
 	const cardList = basket.items.map((item, index) => {
@@ -132,7 +131,7 @@ emitter.on('basket:items-changed', (data: IIdentifier) => {
 	});
 });
 
-emitter.on('order:open', () => {
+emitter.on(EVENTS.OrderOpen, () => {
 	const orderList: IOrderList = {
 		total: basket.total,
 		items: basket.getIdList(),
@@ -140,30 +139,36 @@ emitter.on('order:open', () => {
 	orderBuilder.orderList = orderList;
 
 	modal.render({
-		content: orderUI.render({ valid: orderUI.valid, error: getErrorText(orderUI) }),
+		content: orderUI.render({
+			valid: orderUI.valid,
+			error: getErrorText(orderUI),
+		}),
 	});
 });
 
-emitter.on('order:input', () => {
+emitter.on(EVENTS.OrderInput, () => {
 	validate(orderUI);
 });
 
-emitter.on('order:submit', () => {
+emitter.on(EVENTS.OrderSubmit, () => {
 	const deliveryData: IDelivery = {
 		payment: orderUI.payment as PaymentMethod,
 		address: orderUI.address,
 	};
 	orderBuilder.delivery = deliveryData;
 	modal.render({
-		content: contactsUI.render({ valid: contactsUI.valid, error: getErrorText(contactsUI) }),
+		content: contactsUI.render({
+			valid: contactsUI.valid,
+			error: getErrorText(contactsUI),
+		}),
 	});
 });
 
-emitter.on('contacts:input', () => {
+emitter.on(EVENTS.ContactsInput, () => {
 	validate(contactsUI);
 });
 
-emitter.on('contacts:submit', () => {
+emitter.on(EVENTS.ContactsSubmit, () => {
 	const contactsData: IContacts = {
 		email: contactsUI.email,
 		phone: contactsUI.phone,
@@ -178,12 +183,10 @@ emitter.on('contacts:submit', () => {
 			contactsUI.clear();
 			basket.clear();
 		})
-		.catch((error) => {
-			console.log(`Ошибка ${error}`);
-		});
+		.catch(console.error);
 });
 
-emitter.on('success:submit', () => {
+emitter.on(EVENTS.SuccessSubmit, () => {
 	modal.close();
 });
 
@@ -193,6 +196,4 @@ api
 	.then((data) => {
 		catalog.items = data;
 	})
-	.catch((error) => {
-		console.log(`Ошибка ${error}`);
-	});
+	.catch(console.error);
